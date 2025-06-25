@@ -14,13 +14,16 @@ def opposite_hyperplane(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k:
     vectorized operations to avoid Python loops and intermediate copies of
     the input matrix Q.
 
-    Args:
+    Parameters:
         Q: A 2D numpy array of shape (n_samples, n_classes) representing the
            similarity matrix, where Q[i, c] is the similarity of sample i
            to class c.
         y: A 1D numpy array of shape (n_samples,) containing the integer
            class label for each sample. It's assumed that labels are
            in the range [0, n_classes-1].
+        factor_h: A scaled factor from the RBF kernel bandwidth parameter.
+        factor_k: A scaled factor from the number of nearest neighbors used
+                  in the sparse RBF kernel.
 
     Returns:
         A float value between 0.0 and 1.0 representing the absolute
