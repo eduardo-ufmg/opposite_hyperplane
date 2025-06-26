@@ -26,7 +26,7 @@ def opposite_hyperplane(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k:
                   in the sparse RBF kernel.
 
     Returns:
-        A float value between 0.0 and 1.0 representing the absolute
+        A float value between 1.0 and 0.0 representing the opposite of the absolute
         cosine similarity between the two hyperplane normals. Returns np.nan
         if a unique hyperplane cannot be formed (e.g., fewer than 2 classes
         have samples).
@@ -102,5 +102,5 @@ def opposite_hyperplane(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k:
     # as the direction of the normal does not affect the hyperplane's orientation.
     cosine_similarity = np.abs(np.dot(n_centroid, n_opposite_norm))
     
-    return float(cosine_similarity) * factor_h * factor_k
+    return (1 - float(cosine_similarity)) * factor_h * factor_k
 
