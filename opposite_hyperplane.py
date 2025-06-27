@@ -1,7 +1,10 @@
 import numpy as np
 from numpy.linalg import svd
 
-def opposite_hyperplane(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: float) -> float:
+
+def opposite_hyperplane(
+    Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: float
+) -> float:
     """
     Computes the parallelism between the class centroid hyperplane and the
     hyperplane defined by sum(axis) = 0.
@@ -40,7 +43,9 @@ def opposite_hyperplane(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k:
     if Q.ndim != 2 or y.ndim != 1:
         raise ValueError("Q must be a 2D array and y must be a 1D array.")
     if Q.shape[0] != y.shape[0]:
-        raise ValueError("Q and y must have the same number of samples (first dimension).")
+        raise ValueError(
+            "Q and y must have the same number of samples (first dimension)."
+        )
 
     _n_samples, n_classes = Q.shape
 
@@ -64,7 +69,7 @@ def opposite_hyperplane(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k:
     # This avoids creating large intermediate arrays, crucial for memory efficiency.
     class_sums = np.zeros((n_classes, n_classes), dtype=Q.dtype)
     np.add.at(class_sums, y, Q)
-    
+
     # Calculate centroids via vectorized division.
     centroids = class_sums / class_counts[:, np.newaxis]
 
@@ -93,7 +98,7 @@ def opposite_hyperplane(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k:
     # The "opposite hyperplane" (e.g., x+y+z=0) has a simple normal vector (1, 1, 1).
     # We create and normalize this vector.
     n_opposite = np.ones(n_classes, dtype=Q.dtype)
-    norm_opposite = np.sqrt(n_classes) # Faster than np.linalg.norm()
+    norm_opposite = np.sqrt(n_classes)  # Faster than np.linalg.norm()
     n_opposite_norm = n_opposite / norm_opposite
 
     # --- Final Parallelism Calculation ---
@@ -101,6 +106,5 @@ def opposite_hyperplane(Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k:
     # between them is simply their dot product. We take the absolute value
     # as the direction of the normal does not affect the hyperplane's orientation.
     cosine_similarity = np.abs(np.dot(n_centroid, n_opposite_norm))
-    
-    return (1 - float(cosine_similarity)) * factor_h * factor_k
 
+    return (1 - float(cosine_similarity)) * factor_h * factor_k
