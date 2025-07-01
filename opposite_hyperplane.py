@@ -107,4 +107,4 @@ def opposite_hyperplane(
     # as the direction of the normal does not affect the hyperplane's orientation.
     cosine_similarity = np.abs(np.dot(n_centroid, n_opposite_norm))
 
-    return (1 - float(cosine_similarity)) * factor_h * factor_k
+    return (1 - float(cosine_similarity))
