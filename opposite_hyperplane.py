@@ -1,9 +1,10 @@
 import numpy as np
 from numpy.linalg import svd
 
+from paramhandling.paramhandler import parcheck, get_nparrays, get_classes
 
 def opposite_hyperplane(
-    Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: float
+    Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: float, classes: np.ndarray | None = None
 ) -> float:
     """
     Computes the parallelism between the class centroid hyperplane and the
@@ -18,16 +19,19 @@ def opposite_hyperplane(
     the input matrix Q.
 
     Parameters:
-        Q: A 2D numpy array of shape (n_samples, n_classes) representing the
-           similarity matrix, where Q[i, c] is the similarity of sample i
-           to class c.
-        y: A 1D numpy array of shape (n_samples,) containing the integer
-           class label for each sample. It's assumed that labels are
-           in the range [0, n_classes-1].
-        factor_h: A scaled factor from the RBF kernel bandwidth parameter.
-        factor_k: A scaled factor from the number of nearest neighbors used
-                  in the sparse RBF kernel.
-
+        Q (np.ndarray): An (M, N) similarity matrix where M is the number of samples
+                        and N is the number of classes. Q[i, c] is the similarity
+                        of sample i to class c. These rows are treated as points
+                        in an N-dimensional space.
+        y (np.ndarray): An (M,) array of labels, where y[i] is the integer class
+                        label for sample i.
+        factor_h (float): A scaled factor from the RBF kernel bandwidth parameter.
+        factor_k (float): A scaled factor from the number of nearest neighbors used in
+                        the sparse RBF kernel.
+        classes (np.ndarray | None): The complete list of unique class labels. If provided,
+                                     it's used to define the class space. If None,
+                                     classes are inferred from y.
+                        
     Returns:
         A float value between 1.0 and 0.0 representing the opposite of the absolute
         cosine similarity between the two hyperplane normals. Returns np.nan
@@ -39,19 +43,10 @@ def opposite_hyperplane(
                     associated samples in y, as this prevents the formation
                     of a unique n_classes-dimensional hyperplane.
     """
-    # --- Input Validation and Dimension Extraction ---
-    if Q.ndim != 2 or y.ndim != 1:
-        raise ValueError("Q must be a 2D array and y must be a 1D array.")
-    if Q.shape[0] != y.shape[0]:
-        raise ValueError(
-            "Q and y must have the same number of samples (first dimension)."
-        )
 
-    _n_samples, n_classes = Q.shape
-
-    # A hyperplane requires at least 2 points to be defined in this context.
-    if n_classes < 2:
-        return np.nan
+    parcheck(Q, y, factor_h, factor_k, classes)
+    Q, y = get_nparrays(Q, y)
+    unique_labels, n_classes = get_classes(y, classes)
 
     # --- Centroid Calculation (Optimized) ---
     # Use np.bincount to get the number of samples per class efficiently.
