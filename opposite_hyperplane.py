@@ -3,8 +3,13 @@ from numpy.linalg import svd
 
 from paramhandling.paramhandler import parcheck, get_nparrays, get_classes
 
+
 def opposite_hyperplane(
-    Q: np.ndarray, y: np.ndarray, factor_h: float, factor_k: float, classes: np.ndarray | None = None
+    Q: np.ndarray,
+    y: np.ndarray,
+    factor_h: float,
+    factor_k: float,
+    classes: np.ndarray | None = None,
 ) -> float:
     """
     Computes the parallelism between the class centroid hyperplane and the
@@ -31,7 +36,7 @@ def opposite_hyperplane(
         classes (np.ndarray | None): The complete list of unique class labels. If provided,
                                      it's used to define the class space. If None,
                                      classes are inferred from y.
-                        
+
     Returns:
         A float value between 1.0 and 0.0 representing the opposite of the absolute
         cosine similarity between the two hyperplane normals. Returns np.nan
